@@ -22,7 +22,8 @@
   --accent:#4CC3CC; --accent-fg:#06262A; --accent-soft:#12363B; --hover:#1A2432; --sel:#163038;
   --good:#3DB77A; --mid:#6A9BF0; --low:#E0A23C; --bad:#EE6A71; color-scheme:dark}
 *{box-sizing:border-box}
-html,body{height:100%}
+html{zoom:.75}
+html,body{height:calc(100vh / .75)}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:13.5px;line-height:1.4;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;overflow:hidden}
 button,input,select{font:inherit;color:inherit}
@@ -170,10 +171,10 @@ button{cursor:pointer}
 }
 
 /* ---- Instrument & Lender Wise tab ---- */
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);flex:none}
-.tabs button{border:0;background:none;padding:8px 16px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
-.tabs button:hover{color:var(--fg)}
-.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tabs{display:flex;gap:8px;flex:none;padding-bottom:2px}
+.tabs button{border:1.5px solid var(--accent);background:var(--accent-soft);padding:9px 22px;font-weight:600;font-size:14px;color:var(--accent);border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.12);transition:background .15s,color .15s}
+.tabs button:hover{background:var(--accent);color:var(--accent-fg)}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);box-shadow:0 2px 6px rgba(11,110,120,.35)}
 #app.ilvmode>*:not(.tabs):not(#ilv){display:none!important}
 #app:not(.ilvmode)>#ilv{display:none}
 #ilv{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
@@ -409,11 +410,12 @@ function initMS(){
   addEventListener('resize',closeMS);
 }
 function placeMS(btn,p){
-  const r=btn.getBoundingClientRect(),vw=document.documentElement.clientWidth,vh=window.innerHeight;
+  const Z=parseFloat(getComputedStyle(document.documentElement).zoom)||1;
+  const r=btn.getBoundingClientRect(),vw=window.innerWidth/Z,vh=window.innerHeight/Z,rl=r.left/Z,rb=r.bottom/Z;
   const w=Math.max(280,Math.min(340,vw-16));p.style.width=w+'px';
-  p.style.left=Math.max(8,Math.min(r.left,vw-w-8))+'px';
-  p.style.top=(r.bottom+4)+'px';
-  p.style.maxHeight=Math.min(480,Math.max(180,vh-r.bottom-16))+'px';
+  p.style.left=Math.max(8,Math.min(rl,vw-w-8))+'px';
+  p.style.top=(rb+4)+'px';
+  p.style.maxHeight=Math.min(480,Math.max(180,vh-rb-16))+'px';
 }
 function closeMS(){Object.values(MSID).forEach(id=>{const b=$(id);b.querySelector('.msp').hidden=true;b.querySelector('.msb').setAttribute('aria-expanded','false')})}
 function drawYear(){
